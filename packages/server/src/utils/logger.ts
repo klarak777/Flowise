@@ -57,8 +57,8 @@ const logger = createLogger({
  *   this.app.use(expressRequestLogger)
  */
 export function expressRequestLogger(req: Request, res: Response, next: NextFunction): void {
-    const unwantedLogURLs = ['/api/v1/node-icon/']
-    if (req.url.includes('/api/v1/') && !unwantedLogURLs.some((url) => req.url.includes(url))) {
+    const unwantedLogURLs = ['/api/v1/node-icon/', '/api/v1/components-credentials-icon/']
+    if (/\/api\/v1\//i.test(req.url) && !unwantedLogURLs.some((url) => new RegExp(url, 'i').test(req.url))) {
         const fileLogger = createLogger({
             format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), format.json(), errors({ stack: true })),
             defaultMeta: {
@@ -85,7 +85,8 @@ export function expressRequestLogger(req: Request, res: Response, next: NextFunc
                 GET: '⬇️',
                 POST: '⬆️',
                 PUT: '🖊',
-                DELETE: '❌'
+                DELETE: '❌',
+                OPTION: '🔗'
             }
 
             return requetsEmojis[method] || '?'
